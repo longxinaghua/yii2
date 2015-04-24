@@ -5,6 +5,7 @@ use yiiunit\framework\validators\ExistValidatorTest;
 
 /**
  * @group validators
+ * @group sqlite
  */
 class ExistValidatorSQliteTest extends ExistValidatorTest
 {

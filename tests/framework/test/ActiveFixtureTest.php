@@ -49,9 +49,8 @@ class MyDbTestCase
 }
 
 /**
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * @group db
+ * @group mysql
  */
 class ActiveFixtureTest extends DatabaseTestCase
 {

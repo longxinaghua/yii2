@@ -11,6 +11,7 @@ use yii\console\controllers\CacheController;
  * @see CacheController
  *
  * @group console
+ * @group mysql
  */
 class CacheControllerTest extends TestCase
 {

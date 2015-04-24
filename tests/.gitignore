@@ -1,2 +1,4 @@
 /runtime/cache/*
 /data/config.local.php
+/docker
+/dockerids
