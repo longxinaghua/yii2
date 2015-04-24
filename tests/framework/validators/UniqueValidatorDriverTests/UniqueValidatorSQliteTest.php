@@ -7,6 +7,7 @@ use yiiunit\framework\validators\UniqueValidatorTest;
 /**
  * @group validators
  * @group sqlite
+ * @group db
  */
 class UniqueValidatorSQliteTest extends UniqueValidatorTest
 {

@@ -21,6 +21,7 @@ use yiiunit\data\ar\Order;
  *
  * @group data
  * @group db
+ * @group mysql
  */
 class ActiveDataProviderTest extends DatabaseTestCase
 {

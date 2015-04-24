@@ -4,6 +4,7 @@
 namespace yiiunit\framework\log;
 
 /**
+ * @group log
  * @group db
  * @group pgsql
  */

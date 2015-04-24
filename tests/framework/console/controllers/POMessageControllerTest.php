@@ -8,6 +8,7 @@ use yii\i18n\GettextPoFile;
 
 /**
  * Tests that [[\yii\console\controllers\MessageController]] works as expected with PO message format.
+ * @group console
  */
 class POMessageControllerTest extends BaseMessageControllerTest
 {

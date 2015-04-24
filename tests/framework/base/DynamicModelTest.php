@@ -11,9 +11,7 @@ use yii\base\DynamicModel;
 use yiiunit\TestCase;
 
 /**
- *
- * @author Qiang Xue <qiang.xue@gmail.com>
- * @since 2.0
+ * @group base
  */
 class DynamicModelTest extends TestCase
 {

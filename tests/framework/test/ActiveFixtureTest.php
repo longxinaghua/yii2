@@ -51,6 +51,7 @@ class MyDbTestCase
 /**
  * @group db
  * @group mysql
+ * @group test
  */
 class ActiveFixtureTest extends DatabaseTestCase
 {

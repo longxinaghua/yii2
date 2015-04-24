@@ -8,6 +8,7 @@ use yii\helpers\VarDumper;
 
 /**
  * Tests that [[\yii\console\controllers\MessageController]] works as expected with PHP message format.
+ * @group console
  */
 class PHPMessageControllerTest extends BaseMessageControllerTest
 {

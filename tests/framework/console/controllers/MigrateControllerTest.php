@@ -13,6 +13,8 @@ use yiiunit\TestCase;
  * @see MigrateController
  *
  * @group console
+ * @group db
+ * @group sqlite
  */
 class MigrateControllerTest extends TestCase
 {

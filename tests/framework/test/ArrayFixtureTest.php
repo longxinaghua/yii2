@@ -11,6 +11,9 @@ namespace yiiunit\framework\test;
 use yiiunit\TestCase;
 use yii\test\ArrayFixture;
 
+/**
+ * @group test
+ */
 class ArrayFixtureTest extends TestCase
 {
 

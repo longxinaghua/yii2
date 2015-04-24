@@ -14,6 +14,8 @@ use yiiunit\framework\db\DatabaseTestCase;
 
 /**
  * @group validators
+ * @group mysql
+ * @group db
  */
 class UniqueValidatorTest extends DatabaseTestCase
 {

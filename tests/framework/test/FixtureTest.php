@@ -111,6 +111,9 @@ class MyTestCase
     }
 }
 
+/**
+ * @group test
+ */
 class FixtureTest extends TestCase
 {
     public function testDependencies()
