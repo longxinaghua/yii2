@@ -61,6 +61,17 @@ composer:
 docker-php: dockerfiles
 	cd tests/docker/php && sh build.sh
 
+# docker for mysql
+docker-mysql: docker-mysql-pull
+	docker run --rm=true -v $(shell pwd):/opt --link $(shell cat tests/dockerids/mysql):mysql mysql:${MYSQL_VERSION} mysql -uroot -ptravis "CREATE DATABASE yiitest;"
+	# adjust-config
+	echo "<?php \$$config['databases']['mysql']['dsn'] = 'mysql:host=mysql;dbname=yiitest';" > tests/data/config.local.php
+
+docker-mysql-pull: dockerfiles
+	docker pull mysql:${MYSQL_VERSION}
+	docker run -d -P -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
+	sleep 2
+
 # setup and run docker for Oracle XE
 docker-oci: dockerfiles
 	docker pull alexeiled/docker-oracle-xe-11g
