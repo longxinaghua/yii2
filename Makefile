@@ -80,7 +80,7 @@ docker-mysql: docker-mysql-pull
 docker-mysql-pull: dockerfiles
 	docker pull mysql:${MYSQL_VERSION}
 	docker run -d -P -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
-	sleep 2
+	sleep 5
 
 # setup and run docker for Oracle XE
 docker-oci: dockerfiles
@@ -96,7 +96,7 @@ docker-pgsql: docker-pgsql-pull
 docker-pgsql-pull: dockerfiles
 	docker pull postgres:${PGSQL_VERSION}
 	docker run -d -P postgres:${PGSQL_VERSION} > tests/dockerids/pgsql
-	sleep 2
+	sleep 5
 
 docker-%:
 	echo "there is no docker available for $*" && exit 1
