@@ -44,12 +44,22 @@ test-nodb: composer docker-php
 	# this only excludes external databases, so sqlite is included
 	docker run -v $(shell pwd):/opt/test ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --exclude-group=db,cubrid,oci,pgsql,mysql,mssql,memcache,memcached,${PHPUNIT_EXCLUDE} ${PHPUNIT_OPTIONS}
 
-test-%: composer docker-php docker-%
-	if test -f tests/dockerids/$* ; then \
-		docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/$*):$* ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=$* ${PHPUNIT_OPTIONS} ; \
-	else \
-		docker run -v $(shell pwd):/opt/test ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=$* ${PHPUNIT_OPTIONS} ; \
-	fi
+# run test for a specific group without db requirement
+test-%: composer docker-php
+	docker run -v $(shell pwd):/opt/test ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=$* ${PHPUNIT_OPTIONS}
+
+# run tests for mysql
+test-mysql: composer docker-php docker-mysql
+	docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/mysql):mysql ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=mysql ${PHPUNIT_OPTIONS} ; \
+
+# run tests for mariadb
+test-mariadb: composer docker-php docker-mariadb
+	docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/mariadb):mysql ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=mysql ${PHPUNIT_OPTIONS} ; \
+
+# run tests for postgresql
+test-pgsql: composer docker-php docker-pgsql
+	docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/pgsql):pgsql ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=pgsql ${PHPUNIT_OPTIONS} ; \
+
 
 
 # setup targets
