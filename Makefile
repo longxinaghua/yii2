@@ -55,7 +55,7 @@ test-%: composer docker-php docker-%
 # setup targets
 
 composer:
-	#composer install --prefer-dist
+	composer install --prefer-dist
 
 # setup docker for php
 docker-php: dockerfiles
