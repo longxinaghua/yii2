@@ -63,7 +63,7 @@ docker-php: dockerfiles
 
 # docker for mysql
 docker-mysql: docker-mysql-pull
-	docker run --rm=true -v $(shell pwd):/opt --link $(shell cat tests/dockerids/mysql):mysql mysql:${MYSQL_VERSION} mysql -uroot -ptravis -Hmysql "CREATE DATABASE yiitest;"
+	docker run --rm=true -v $(shell pwd):/opt --link $(shell cat tests/dockerids/mysql):mysql mysql:${MYSQL_VERSION} mysql -uroot -ptravis -hmysql "CREATE DATABASE yiitest;"
 	# adjust-config
 	echo "<?php \$$config['databases']['mysql']['dsn'] = 'mysql:host=mysql;dbname=yiitest';" > tests/data/config.local.php
 
