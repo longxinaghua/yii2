@@ -71,6 +71,9 @@ class UserTest extends TestCase
         $am->addChild($role, $perm);
         $am->assign($role, 'user1');
 
+        Yii::$app->session->open();
+        $error = error_get_last();
+        $this->assertTrue(Yii::$app->session->getIsActive(), 'Failed to start session: ' . isset($error['message']) ? $error['message'] : 'Unknown reason.');
         Yii::$app->session->removeAll();
         static::$time = \time();
         Yii::$app->user->login(UserIdentity::findIdentity('user1'));
