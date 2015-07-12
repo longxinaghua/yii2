@@ -79,7 +79,9 @@ docker-mysql: docker-mysql-pull
 
 docker-mysql-pull: dockerfiles
 	docker pull mysql:${MYSQL_VERSION}
-	docker run -d -P -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
+	mkdir -p data/mysql
+	mount -t tmpfs -o size=1G,nr_inodes=10k,mode=0700 tmpfs data/mysql
+	docker run -d -P -v $(shell pwd)/data/mysql:/var/lib/mysql -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
 	sleep 30
 
 # setup and run docker for Oracle XE
@@ -114,4 +116,5 @@ clean:
 	docker stop $(shell cat tests/dockerids/*)
 	docker rm $(shell cat tests/dockerids/*)
 	rm tests/dockerids/*
+	-umount data/mysql
 
