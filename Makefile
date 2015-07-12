@@ -6,6 +6,11 @@ PHP_VERSION=php-5.6.8
 # postgresql version, see https://registry.hub.docker.com/_/postgres/ for available versions
 PGSQL_VERSION=latest
 
+MYSQL_VERSION=latest
+
+CUBRID_VERSION=9.3
+CUBRID_PDO_VERSION=9.3
+
 # options to pass to phpunit
 PHPUNIT_OPTIONS=--color
 PHPUNIT_EXCLUDE=zenddata,wincache,xcache
@@ -60,6 +65,10 @@ test-mariadb: composer docker-php docker-mariadb
 test-pgsql: composer docker-php docker-pgsql
 	docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/pgsql):pgsql ${DOCKER_OPTIONS} yiitest/php:${PHP_VERSION} vendor/bin/phpunit --group=pgsql ${PHPUNIT_OPTIONS} ; \
 
+# run tests for cubrid
+test-cubrid: composer docker-cubrid-php docker-cubrid
+	docker run -v $(shell pwd):/opt/test --link $(shell cat tests/dockerids/cubrid):cubrid ${DOCKER_OPTIONS} yiitest/php-cubrid:${PHP_VERSION}-${CUBRID_PDO_VERSION} vendor/bin/phpunit --group=cubrid ${PHPUNIT_OPTIONS} ; \
+
 
 
 # setup targets
@@ -81,6 +90,20 @@ docker-mysql-pull: dockerfiles
 	docker pull mysql:${MYSQL_VERSION}
 	docker run -d -P -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
 	sleep 30
+
+# docker for CUBRID
+docker-cubrid: docker-cubrid-pull
+	# adjust-config
+	echo "<?php \$$config['databases']['cubrid']['dsn'] = 'cubrid:dbname=demodb;host=cubrid;port=33000'; \$$config['databases']['cubrid']['username'] = 'dba'; \$$config['databases']['cubrid']['password'] = ''; " > tests/data/config.local.php
+
+docker-cubrid-pull: dockerfiles
+	cd tests/docker/cubrid && sh build.sh
+	docker run -d -P yiitest/cubrid:${CUBRID_VERSION} > tests/dockerids/cubrid
+	sleep 30
+
+# setup docker for php with cubrid PDO
+docker-cubrid-php: dockerfiles
+	cd tests/docker/cubrid-php && sh build.sh
 
 # setup and run docker for Oracle XE
 docker-oci: dockerfiles
