@@ -80,7 +80,7 @@ docker-mysql: docker-mysql-pull
 docker-mysql-pull: dockerfiles
 	docker pull mysql:${MYSQL_VERSION}
 	docker run -d -P -e MYSQL_ROOT_PASSWORD=travis mysql:${MYSQL_VERSION} > tests/dockerids/mysql
-	sleep 10
+	sleep 30
 
 # setup and run docker for Oracle XE
 docker-oci: dockerfiles
