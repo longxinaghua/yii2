@@ -48,7 +48,9 @@ abstract class CompositeUrlRule extends Object implements UrlRuleInterface
         foreach ($this->rules as $rule) {
             /* @var $rule \yii\web\UrlRule */
             if (($result = $rule->parseRequest($manager, $request)) !== false) {
-                Yii::trace("Request parsed with URL rule: {$rule->name}", __METHOD__);
+                if ($rule instanceof UrlRule) {
+                    Yii::trace("Request parsed with URL rule: {$rule->name}", __METHOD__);
+                }
 
                 return $result;
             }

@@ -211,6 +211,39 @@ class GroupUrlRuleTest extends TestCase
                     ['_/create.html', false],
                 ],
             ],
+            [
+                'no prefix, nested',
+                [
+                    'rules' => [
+                        [
+                            'class' => 'yii\rest\UrlRule',
+                            'controller' => ['users' => 'user'],
+                        ],
+                    ],
+                ],
+                [
+                    ['users', 'user/index'],
+                    ['user', false],
+                ],
+            ],
+            [
+                'with prefix, nested',
+                [
+                    'prefix' => 'admin',
+                    'rules' => [
+                        [
+                            'class' => 'yii\rest\UrlRule',
+                            'controller' => ['users' => 'user'],
+                        ],
+                        'login' => 'site/login',
+                    ],
+                ],
+                [
+                    ['users', 'user/index'],
+                    ['users', 'user/index'],
+                    ['user', false],
+                ],
+            ],
         ];
     }
 }

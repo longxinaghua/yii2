@@ -92,6 +92,7 @@ class GroupUrlRule extends CompositeUrlRule
     {
         $rules = [];
         foreach ($this->rules as $key => $rule) {
+            // apply prefix if this is a yii\web\UrlRule
             if (!is_array($rule)) {
                 $rule = [
                     'pattern' => ltrim($this->prefix . '/' . $key, '/'),
@@ -100,7 +101,8 @@ class GroupUrlRule extends CompositeUrlRule
             } elseif (isset($rule['pattern'], $rule['route'])) {
                 $rule['pattern'] = ltrim($this->prefix . '/' . $rule['pattern'], '/');
                 $rule['route'] = ltrim($this->routePrefix . '/' . $rule['route'], '/');
-            }
+            } elseif (isset($rule['class']) && ($rule['class'] == 'yii\web\GroupUrlRule' || )
+            // propagate prefix if it is a GroupUrlRule or yii\rest\UrlRule
 
             $rule = Yii::createObject(array_merge($this->ruleConfig, $rule));
             if (!$rule instanceof UrlRuleInterface) {
