@@ -5,6 +5,9 @@ namespace yiiunit\framework\helpers;
 use Yii;
 use yii\base\DynamicModel;
 use yii\base\Model;
+use yii\base\NotSupportedException;
+use yii\db\ActiveQueryInterface;
+use yii\db\ActiveRecordInterface;
 use yii\helpers\Html;
 use yii\helpers\Url;
 use yiiunit\TestCase;
@@ -1030,16 +1033,64 @@ EOD;
     public function testGetAttributeValue()
     {
         $model = new HtmlTestModel();
+        $model->name = 'TestName';
         $model->types = ['type1', 'type2', ['sub-array', 'sub-array2']];
 
+        // return full value of the attribute as it is specified
         $this->assertEquals($model->types, Html::getAttributeValue($model, 'types'));
-        $this->assertEquals($model->types, Html::getAttributeValue($model, 'types[]'));
+        $this->assertEquals($model->name, Html::getAttributeValue($model, 'name'));
+
+        // it is unclear which element to return, expect null, i.e. form element should be empty
+        $this->assertNull(Html::getAttributeValue($model, 'types[]'));
+        $this->assertNull(Html::getAttributeValue($model, 'types[1][]'));
+        $this->assertNull(Html::getAttributeValue($model, 'types[2][]'));
+        $this->assertNull(Html::getAttributeValue($model, 'types[][1]'));
+        $this->assertNull(Html::getAttributeValue($model, 'types[][2]'));
+
+        // return elements from array and sub array
         $this->assertEquals('type1', Html::getAttributeValue($model, 'types[0]'));
         $this->assertEquals('type2', Html::getAttributeValue($model, 'types[1]'));
-        $this->assertEquals('type2', Html::getAttributeValue($model, 'types[1][]'));
-        $this->assertEquals(['sub-array', 'sub-array2'], Html::getAttributeValue($model, 'types[2][]'));
+        $this->assertEquals(['sub-array', 'sub-array2'], Html::getAttributeValue($model, 'types[2]'));
         $this->assertEquals('sub-array2', Html::getAttributeValue($model, 'types[2][1]'));
-        $this->assertEquals(null, Html::getAttributeValue($model, 'types[3]'));
+
+        // expect null on non-existing element
+        $this->assertNull(Html::getAttributeValue($model, 'types[3]'));
+    }
+
+    /**
+     * test conversion of AR objects to PK on getAttributeValue()
+     */
+    public function testGetAttributeValueAR()
+    {
+        // test single AR instance
+        $model = new HtmlTestModel();
+        $model->name = 'TestName';
+        $model->types = new HtmlTestAR(['id' => 42]);
+
+        $this->assertEquals(42, Html::getAttributeValue($model, 'types'));
+        $this->assertEquals($model->name, Html::getAttributeValue($model, 'name'));
+        $this->assertNull(Html::getAttributeValue($model, 'types[]'));
+        $this->assertEquals(42, Html::getAttributeValue($model, 'types[id]'));
+
+        // test array of AR instances
+        $model = new HtmlTestModel();
+        $model->name = 'TestName';
+        $model->types = [
+            new HtmlTestAR(['id' => 1]),
+            new HtmlTestAR(['id' => 2]),
+            new HtmlTestAR(['id' => 3]),
+        ];
+
+        $this->assertEquals([1,2,3], Html::getAttributeValue($model, 'types'));
+        $this->assertEquals($model->name, Html::getAttributeValue($model, 'name'));
+
+        // return elements from array as PK
+        $this->assertEquals(1, Html::getAttributeValue($model, 'types[0]'));
+        $this->assertEquals(2, Html::getAttributeValue($model, 'types[1]'));
+        $this->assertEquals(3, Html::getAttributeValue($model, 'types[2]'));
+
+        // expect null on non-existing element
+        $this->assertNull(Html::getAttributeValue($model, 'types[3]'));
     }
 }
 
@@ -1064,5 +1115,125 @@ class HtmlTestModel extends DynamicModel
             ['name', 'string', 'max' => 100],
             ['description', 'string', 'max' => 500],
         ];
+    }
+}
+
+class HtmlTestAR extends Model implements ActiveRecordInterface
+{
+    public $id;
+
+    public static function primaryKey()
+    {
+        return ['id'];
+    }
+
+    public function getAttribute($name)
+    {
+        return $this->$name;
+    }
+
+    public function setAttribute($name, $value)
+    {
+        $this->$name = $value;
+    }
+
+    public function hasAttribute($name)
+    {
+        return in_array($name, $this->attributes(), true);
+    }
+
+    public function getPrimaryKey($asArray = false)
+    {
+        return $asArray ? [$this->id] : $this->id;
+    }
+
+    public function getOldPrimaryKey($asArray = false)
+    {
+        return $asArray ? [$this->id] : $this->id;
+    }
+
+    public static function isPrimaryKey($keys)
+    {
+        return count($keys) === 1 && reset($keys) === 'id';
+    }
+
+    public static function find()
+    {
+        throw new NotSupportedException();
+    }
+
+    public static function findOne($condition)
+    {
+        throw new NotSupportedException();
+    }
+
+    public static function findAll($condition)
+    {
+        throw new NotSupportedException();
+    }
+
+    public static function updateAll($attributes, $condition = null)
+    {
+        throw new NotSupportedException();
+    }
+
+    public static function deleteAll($condition = null)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function save($runValidation = true, $attributeNames = null)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function insert($runValidation = true, $attributes = null)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function update($runValidation = true, $attributeNames = null)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function delete()
+    {
+        throw new NotSupportedException();
+    }
+
+    public function getIsNewRecord()
+    {
+        return true;
+    }
+
+    public function equals($record)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function getRelation($name, $throwException = true)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function populateRelation($name, $records)
+    {
+        throw new NotSupportedException();
+    }
+
+    public function link($name, $model, $extraColumns = [])
+    {
+        throw new NotSupportedException();
+    }
+
+    public function unlink($name, $model, $delete = false)
+    {
+        throw new NotSupportedException();
+    }
+
+    public static function getDb()
+    {
+        throw new NotSupportedException();
     }
 }

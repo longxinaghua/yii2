@@ -2043,8 +2043,11 @@ class BaseHtml
         }
         $attribute = $matches[2];
         $value = $model->$attribute;
-        if ($matches[3] !== '' && $matches[3] !== '[]') {
+        if ($matches[3] !== '' && substr_compare($matches[3], '[]', -2, 2) !== 0) {
             foreach (explode('][', trim($matches[3], '[]')) as $id) {
+                if ($id === '') {
+                    return null;
+                }
                 if ((is_array($value) || $value instanceof \ArrayAccess) && isset($value[$id])) {
                     $value = $value[$id];
                 } else {
@@ -2053,6 +2056,7 @@ class BaseHtml
             }
         }
 
+        // convert instances of active record classes to their primary key
         // https://github.com/yiisoft/yii2/issues/1457
         if (is_array($value)) {
             foreach ($value as $i => $v) {
