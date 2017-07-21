@@ -18,7 +18,7 @@
             <span class="text"><?= $file !== null ? 'in ' . $handler->htmlEncode($file) : '' ?></span>
             <span class="at">
                 <?= $line !== null ? 'at line' : '' ?>
-                <span class="line"><?= $line !== null ? $line + 1 : '' ?></span>
+                <span class="line"><?= $line !== null ? (int) $line + 1 : '' ?></span>
             </span>
             <?php if ($method !== null): ?>
                 <span class="call">
